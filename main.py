@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 import sys
 import os
 
@@ -11,24 +12,27 @@ if getattr(sys, 'frozen', False):   # if application is frozen exe, get path dif
 
 print('Script path: ' + script_path)
 
+parser = ArgumentParser()
 
-def convert():
+parser.add_argument('-pc', '--potocsv',
+                    dest='potocsv',
+                    type=str,
+                    help='Convert .po file to .csv')
 
-    filepath = os.path.join(script_path, sys.argv[1])
+parser.add_argument('-cp', '--csvtopo',
+                    dest='csvtopo',
+                    type=str,
+                    help='Convert .csv file to .po')
 
-    file_name, file_extension = os.path.splitext(filepath)
+args = parser.parse_args()
 
-    extension_converter_classes = {
-        ".po": ConverterPo2CSV,
-        ".csv": ConverterCSV2Po
-    }
+print(f'Po to CSV argument: {args.potocsv}')
+print(f'CSV to PO argument: {args.csvtopo}')
 
-    converter_class: Converter = extension_converter_classes[f"{file_extension}"]
-    if converter_class is None:
-        print(f"Error: Converter class was not found for '{file_extension}' file extension!")
-        return False
+if args.potocsv is not None:
+    filepath = os.path.join(script_path, args.potocsv)
+    ConverterPo2CSV.convert(filepath)
 
-    return converter_class.convert(filepath)
-
-
-convert()
+if args.csvtopo is not None:
+    filepath = os.path.join(script_path, args.csvtopo)
+    ConverterCSV2Po.convert(filepath)
