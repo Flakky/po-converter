@@ -28,6 +28,6 @@ class POField:
 #: {self.reference}
 #| {self.previous}
 msgctxt "{self.msgctxt}"
-msgid "{self.msgstr}"
+msgid "{self.msgid}"
 msgstr "{self.msgstr}"'''
 
