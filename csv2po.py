@@ -31,9 +31,10 @@ class ConverterCSV2Po(Converter):
             next(f)
 
             reader = csv.reader(f)
-
+            
             for row in reader:
-                print(row)
+            
+                print(str(row).encode('utf8'))
 
                 csv_row = CSVRow()
                 csv_row.parse_from_array(row)
@@ -56,7 +57,9 @@ class ConverterCSV2Po(Converter):
 
         for var, val in vars(row).items():
             vars(po_field)[var] = vars(row)[var]
-
-        print(po_field)
+            
+        po_string = str(po_field)
+        
+#        print(po_string.encode('utf8'))
 
         return po_field
