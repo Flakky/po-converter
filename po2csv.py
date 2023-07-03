@@ -49,6 +49,7 @@ class ConverterPo2CSV(Converter):
                     record: str = line.removeprefix(f'{context} ')  # note the whitespace after context
                     record = record.rstrip() # remove new line
                     record = record.strip('\"') # remove quotes if present
+                    record = record.replace('\t', ' ') # Remove tabs because they break csv columns
             
                     for key, value in po_format_mapping.items():
                         if context == value and vars(row)[key] == '':
