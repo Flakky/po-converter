@@ -26,12 +26,13 @@ class ConverterPo2CSV(Converter):
     def convert_file(filepath: str):
         with open(f'{filepath}.csv', 'w', newline='', encoding="utf-8") as csvfile:
             fieldnames = CSVRow.get_headers()
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        
+
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames, quoting=csv.QUOTE_MINIMAL, quotechar='"')
+
             writer.writeheader()
-            
+
             row: CSVRow = None
-            
+
             for line in open(filepath, encoding='utf-8'):
                 if line == "\n":
                     if row is not None:
@@ -43,14 +44,18 @@ class ConverterPo2CSV(Converter):
                 else:
                     if row is None:
                         continue
-                        
+
                     line_parts = line.split(" ")
                     context: str = line_parts[0]
                     record: str = line.removeprefix(f'{context} ')  # note the whitespace after context
-                    record = record.rstrip() # remove new line
-                    record = record.strip('\"') # remove quotes if present
-                    record = record.replace('\t', ' ') # Remove tabs because they break csv columns
-            
+                    record = record.rstrip()  # remove new line
+
+                    if record.startswith('"') and record.endswith('"'): # remove quotes if present
+                        record = record[1:-1]
+
+                    record = record.replace('\\"', '"')  # Remove escaped quotes
+                    record = record.replace('\t', ' ')  # Replace tabs with spaces because they break csv columns
+
                     for key, value in po_format_mapping.items():
                         if context == value and vars(row)[key] == '':
                             vars(row)[key] = record
